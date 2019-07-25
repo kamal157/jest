@@ -1,12 +1,14 @@
 {
   "jest": {
     "rootDir": "./",
-    "transform": {
-      "^.+environment\\.js$": "<rootDir>/preprocessor.js"
-    },
-    "testEnvironment": "<rootDir>/environment.js"
+    "testEnvironment": "<rootDir>/environment.ts",
+    "transformIgnorePatterns": [
+      "jest-environment-node"
+    ]
   },
   "dependencies": {
+    "@babel/preset-typescript": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "jest-environment-node": "^24.8.0"
   }
 }

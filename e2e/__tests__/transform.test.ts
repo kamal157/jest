@@ -207,7 +207,7 @@ describe('transformer caching', () => {
 });
 
 describe('transform-environment', () => {
-  const dir = path.resolve(__dirname, '..', 'transform/transform-environment');
+  const dir = path.resolve(__dirname, '../transform/transform-environment');
 
   it('should transform the environment', () => {
     const {json, stderr} = runWithJson(dir, ['--no-cache']);

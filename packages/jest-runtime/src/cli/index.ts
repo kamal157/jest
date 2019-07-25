@@ -13,10 +13,10 @@ import yargs = require('yargs');
 import {Config} from '@jest/types';
 import {JestEnvironment} from '@jest/environment';
 import {CustomConsole} from '@jest/console';
-import {setGlobal} from 'jest-util';
+import {setGlobal, interopRequireDefault} from 'jest-util';
 import {validateCLIOptions} from 'jest-validate';
 import {deprecationEntries, readConfig} from 'jest-config';
-import {addHook} from 'pirates';
+import {ScriptTransformer} from '@jest/transform';
 import {VERSION} from '../version';
 import {Context} from '../types';
 import * as args from './args';
@@ -82,36 +82,11 @@ export function run(cliArgv?: Config.Argv, cliInfo?: Array<string>) {
     maxWorkers: Math.max(cpus().length - 1, 1),
     watchman: globalConfig.watchman,
   }) as Promise<Context>)
-    .then(hasteMap => {
-      const transformer = new Runtime.ScriptTransformer(config);
-      transformer.preloadTransformer(config.testEnvironment);
-
-      let transforming = false;
-      const revertHook = addHook(
-        (code, filename) => {
-          try {
-            transforming = true;
-            return (
-              transformer.transformSource(filename, code, false).code || code
-            );
-          } finally {
-            transforming = false;
-          }
-        },
-        {
-          exts: [path.extname(config.testEnvironment)],
-          ignoreNodeModules: false,
-          matcher: (...args) => {
-            if (transforming) {
-              // Don't transform any dependency required by the transformer itself
-              return false;
-            }
-            return transformer.shouldTransform(...args);
-          },
-        },
-      );
-      const Environment: typeof JestEnvironment = require(config.testEnvironment);
-      revertHook();
+    .then(async hasteMap => {
+      const transformer = new ScriptTransformer(config);
+      const Environment: typeof JestEnvironment = interopRequireDefault(
+        transformer.requireAndTranspileModule(config.testEnvironment),
+      ).default;
       const environment = new Environment(config);
       setGlobal(
         environment.global,
