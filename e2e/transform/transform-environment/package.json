@@ -1,0 +1,12 @@
+{
+  "jest": {
+    "rootDir": "./",
+    "transform": {
+      "^.+environment\\.js$": "<rootDir>/preprocessor.js"
+    },
+    "testEnvironment": "<rootDir>/environment.js"
+  },
+  "dependencies": {
+    "jest-environment-node": "^24.8.0"
+  }
+}

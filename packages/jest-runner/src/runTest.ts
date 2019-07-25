@@ -6,6 +6,7 @@
  *
  */
 
+import {extname} from 'path';
 import {Config} from '@jest/types';
 import {TestResult} from '@jest/test-result';
 import {
@@ -27,6 +28,7 @@ import * as docblock from 'jest-docblock';
 import {formatExecError} from 'jest-message-util';
 import sourcemapSupport = require('source-map-support');
 import chalk from 'chalk';
+import {addHook} from 'pirates';
 import {TestFramework, TestRunnerContext} from './types';
 
 type RunTestInternalResult = {
@@ -102,16 +104,46 @@ async function runTestInternal(
     });
   }
 
+  const Runtime: typeof RuntimeClass = config.moduleLoader
+    ? require(config.moduleLoader)
+    : require('jest-runtime');
+  const transformer = new Runtime.ScriptTransformer(config);
+
+  transformer.preloadTransformer(testEnvironment);
+
+  let transforming = false;
+  const revertHook = addHook(
+    (code, filename) => {
+      try {
+        transforming = true;
+        return transformer.transformSource(filename, code, false).code || code;
+      } finally {
+        transforming = false;
+      }
+    },
+    {
+      exts: [extname(testEnvironment)],
+      ignoreNodeModules: false,
+      matcher: (...args) => {
+        if (transforming) {
+          // Don't transform any dependency required by the transformer itself
+          return false;
+        }
+        return transformer.shouldTransform(...args);
+      },
+    },
+  );
+
+  const requireEnvironment = require(testEnvironment);
   const TestEnvironment: typeof JestEnvironment = interopRequireDefault(
-    require(testEnvironment),
+    requireEnvironment,
   ).default;
+
+  revertHook();
   const testFramework: TestFramework =
     process.env.JEST_CIRCUS === '1'
       ? require('jest-circus/runner') // eslint-disable-line import/no-extraneous-dependencies
       : require(config.testRunner);
-  const Runtime: typeof RuntimeClass = config.moduleLoader
-    ? require(config.moduleLoader)
-    : require('jest-runtime');
 
   let runtime: RuntimeClass | undefined = undefined;
 
