@@ -5,6 +5,7 @@
       "^.+\\.js$": "<rootDir>/jsPreprocessor.js",
       "^.+\\.svg$": "<rootDir>/filePreprocessor.js"
     },
+    "transformIgnorePatterns": ["jest-jasmine2", "jest-circus"],
     "testEnvironment": "node"
   },
   "dependencies": {

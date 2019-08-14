@@ -17,6 +17,7 @@ import {
   getConsoleOutput,
 } from '@jest/console';
 import {JestEnvironment} from '@jest/environment';
+import {ScriptTransformer} from '@jest/transform';
 import RuntimeClass = require('jest-runtime');
 import * as fs from 'graceful-fs';
 import {ErrorWithStack, interopRequireDefault, setGlobal} from 'jest-util';
@@ -102,13 +103,17 @@ async function runTestInternal(
     });
   }
 
+  const transformer = new ScriptTransformer(config);
   const TestEnvironment: typeof JestEnvironment = interopRequireDefault(
     require(testEnvironment),
   ).default;
-  const testFramework: TestFramework =
-    process.env.JEST_CIRCUS === '1'
-      ? require('jest-circus/runner') // eslint-disable-line import/no-extraneous-dependencies
-      : require(config.testRunner);
+  const testFramework: TestFramework = interopRequireDefault(
+    transformer.requireAndTranspileModule(
+      process.env.JEST_CIRCUS === '1'
+        ? 'jest-circus/runner'
+        : config.testRunner,
+    ),
+  ).default;
   const Runtime: typeof RuntimeClass = config.moduleLoader
     ? require(config.moduleLoader)
     : require('jest-runtime');
