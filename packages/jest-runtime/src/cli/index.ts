@@ -82,7 +82,7 @@ export function run(cliArgv?: Config.Argv, cliInfo?: Array<string>) {
     maxWorkers: Math.max(cpus().length - 1, 1),
     watchman: globalConfig.watchman,
   }) as Promise<Context>)
-    .then(async hasteMap => {
+    .then(hasteMap => {
       const transformer = new ScriptTransformer(config);
       const Environment: typeof JestEnvironment = interopRequireDefault(
         transformer.requireAndTranspileModule(config.testEnvironment),
