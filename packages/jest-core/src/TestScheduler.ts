@@ -7,6 +7,7 @@
 
 import chalk from 'chalk';
 import {formatExecError} from 'jest-message-util';
+import {ScriptTransformer} from '@jest/transform';
 import {Config} from '@jest/types';
 import snapshot = require('jest-snapshot');
 import TestRunner = require('jest-runner');
@@ -28,6 +29,7 @@ import {
   buildFailureTestResult,
   makeEmptyAggregatedTestResult,
 } from '@jest/test-result';
+import interopRequireDefault from 'jest-util/build/interopRequireDefault';
 import ReporterDispatcher from './ReporterDispatcher';
 import TestWatcher from './TestWatcher';
 import {shouldRunInBand} from './testSchedulerHelper';
@@ -174,7 +176,10 @@ export default class TestScheduler {
     const testRunners = Object.create(null);
     contexts.forEach(({config}) => {
       if (!testRunners[config.runner]) {
-        const Runner: typeof TestRunner = require(config.runner);
+        const transformer = new ScriptTransformer(config);
+        const Runner: typeof TestRunner = interopRequireDefault(
+          transformer.requireAndTranspileModule(config.runner),
+        ).default;
         testRunners[config.runner] = new Runner(this._globalConfig, {
           changedFiles: this._context && this._context.changedFiles,
         });
