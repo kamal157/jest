@@ -13,7 +13,7 @@ import yargs = require('yargs');
 import {Config} from '@jest/types';
 import {JestEnvironment} from '@jest/environment';
 import {CustomConsole} from '@jest/console';
-import {setGlobal, interopRequireDefault} from 'jest-util';
+import {interopRequireDefault, setGlobal} from 'jest-util';
 import {validateCLIOptions} from 'jest-validate';
 import {deprecationEntries, readConfig} from 'jest-config';
 import {ScriptTransformer} from '@jest/transform';
