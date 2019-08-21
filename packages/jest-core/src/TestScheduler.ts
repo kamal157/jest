@@ -29,7 +29,7 @@ import {
   buildFailureTestResult,
   makeEmptyAggregatedTestResult,
 } from '@jest/test-result';
-import interopRequireDefault from 'jest-util/build/interopRequireDefault';
+import {interopRequireDefault} from 'jest-util';
 import ReporterDispatcher from './ReporterDispatcher';
 import TestWatcher from './TestWatcher';
 import {shouldRunInBand} from './testSchedulerHelper';
