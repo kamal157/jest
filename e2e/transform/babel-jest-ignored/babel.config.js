@@ -6,5 +6,11 @@
  */
 
 module.exports = {
-  only: ['blablabla', /jest-jasmine2/, /jest-circus/, /jest-each/],
+  only: [
+    'blablabla',
+    /jest-circus/,
+    /jest-each/,
+    /jest-jasmine2/,
+    /jest-source-map/,
+  ],
 };
