@@ -26,9 +26,11 @@ export default async function testRunner(
         duration: 2,
         failureMessages: [],
         fullName: 'sample test',
+        location: null,
+        numPassingAsserts: 1,
         status: 'passed',
         title: 'sample test',
       },
     ],
-  } as TestResult;
+  };
 }
