@@ -87,6 +87,7 @@ test('schedule tests run in parallel per default', async () => {
   const test = {
     context: {
       config: {
+        moduleFileExtensions: ['.js'],
         runner: 'jest-runner-parallel',
         transform: [],
       },
@@ -109,6 +110,7 @@ test('schedule tests run in serial if the runner flags them', async () => {
   const test = {
     context: {
       config: {
+        moduleFileExtensions: ['.js'],
         runner: 'jest-runner-serial',
         transform: [],
       },
@@ -131,6 +133,7 @@ test('should bail after `n` failures', async () => {
   const test = {
     context: {
       config: {
+        moduleFileExtensions: ['.js'],
         rootDir: './',
         runner: 'jest-runner-serial',
         transform: [],
@@ -162,6 +165,7 @@ test('should not bail if less than `n` failures', async () => {
   const test = {
     context: {
       config: {
+        moduleFileExtensions: ['.js'],
         rootDir: './',
         runner: 'jest-runner-serial',
         transform: [],
@@ -193,6 +197,7 @@ test('should set runInBand to run in serial', async () => {
   const test = {
     context: {
       config: {
+        moduleFileExtensions: ['.js'],
         runner: 'jest-runner-parallel',
         transform: [],
       },
@@ -218,6 +223,7 @@ test('should set runInBand to not run in serial', async () => {
   const test = {
     context: {
       config: {
+        moduleFileExtensions: ['.js'],
         runner: 'jest-runner-parallel',
         transform: [],
       },
