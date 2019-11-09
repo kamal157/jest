@@ -7,7 +7,7 @@
  */
 
 import {Global} from '@jest/types';
-import bind from './bind';
+import bind, {bindConcurrent} from './bind';
 
 type Global = Global.Global;
 const install = (
@@ -19,11 +19,13 @@ const install = (
     bind(g.test)(table, ...data)(title, test, timeout);
   test.skip = bind(g.test.skip)(table, ...data);
   test.only = bind(g.test.only)(table, ...data);
+  test.concurrent = bindConcurrent(g.test.concurrent)(table, ...data);
 
   const it = (title: string, test: Global.EachTestFn, timeout?: number) =>
     bind(g.it)(table, ...data)(title, test, timeout);
   it.skip = bind(g.it.skip)(table, ...data);
   it.only = bind(g.it.only)(table, ...data);
+  it.concurrent = bindConcurrent(g.it.concurrent)(table, ...data);
 
   const xit = bind(g.xit)(table, ...data);
   const fit = bind(g.fit)(table, ...data);
@@ -50,6 +52,6 @@ each.withGlobal = (g: Global) => (
   ...data: Global.TemplateData
 ) => install(g, table, ...data);
 
-export {bind};
+export {bind, bindConcurrent};
 
 export default each;

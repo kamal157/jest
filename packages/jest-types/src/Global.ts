@@ -10,6 +10,7 @@ import {CoverageMapData} from 'istanbul-lib-coverage';
 export type DoneFn = (reason?: string | Error) => void;
 export type TestName = string;
 export type TestFn = (done?: DoneFn) => Promise<any> | void | undefined;
+export type ConcurrentTestFn = (done?: DoneFn) => Promise<any>;
 export type BlockFn = () => void;
 export type BlockName = string;
 
@@ -23,14 +24,22 @@ export type EachTable = ArrayTable | TemplateTable;
 export type EachTestFn = (
   ...args: Array<any>
 ) => Promise<any> | void | undefined;
+export type ConcurrentEachTestFn = (...args: Array<any>) => Promise<any>;
 
 // TODO: Get rid of this at some point
 type Jasmine = {_DEFAULT_TIMEOUT_INTERVAL?: number; addMatchers: Function};
 
-type Each = (
-  table: EachTable,
-  ...taggedTemplateData: Array<unknown>
-) => (title: string, test: EachTestFn, timeout?: number) => void;
+type Each = {
+  (table: EachTable, ...taggedTemplateData: Array<unknown>): (
+    title: string,
+    test: EachTestFn,
+    timeout?: number,
+  ) => void;
+  concurrent?: (
+    table: EachTable,
+    ...taggedTemplateData: Array<unknown>
+  ) => (title: string, test: ConcurrentEachTestFn, timeout?: number) => void;
+};
 
 export interface ItBase {
   (testName: TestName, fn: TestFn, timeout?: number): void;
@@ -44,7 +53,7 @@ export interface It extends ItBase {
 }
 
 export interface ItConcurrentBase {
-  (testName: string, testFn: () => Promise<any>, timeout?: number): void;
+  (testName: string, fn: ConcurrentTestFn, timeout?: number): void;
 }
 
 export interface ItConcurrentExtended extends ItConcurrentBase {

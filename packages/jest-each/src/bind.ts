@@ -18,8 +18,16 @@ export type EachTests = Array<{
   arguments: Array<unknown>;
 }>;
 
-type TestFn = (done?: Global.DoneFn) => Promise<any> | void | undefined;
-type GlobalCallback = (testName: string, fn: TestFn, timeout?: number) => void;
+type GlobalCallback = (
+  testName: string,
+  fn: Global.TestFn,
+  timeout?: number,
+) => void;
+type GlobalCallbackConcurrent = (
+  testName: string,
+  fn: Global.ConcurrentTestFn,
+  timeout?: number,
+) => void;
 
 export default (cb: GlobalCallback, supportsDone: boolean = true) => (
   table: Global.EachTable,
@@ -39,6 +47,35 @@ export default (cb: GlobalCallback, supportsDone: boolean = true) => (
         cb(
           row.title,
           applyArguments(supportsDone, row.arguments, test),
+          timeout,
+        ),
+      );
+    } catch (e) {
+      const error = new ErrorWithStack(e.message, eachBind);
+      return cb(title, () => {
+        throw error;
+      });
+    }
+  };
+
+export const bindConcurrent = (
+  cb: GlobalCallbackConcurrent,
+  supportsDone: boolean = true,
+) => (table: Global.EachTable, ...taggedTemplateData: Global.TemplateData) =>
+  function eachBind(
+    title: string,
+    test: Global.ConcurrentEachTestFn,
+    timeout?: number,
+  ): void {
+    try {
+      const tests = isArrayTable(taggedTemplateData)
+        ? buildArrayTests(title, table)
+        : buildTemplateTests(title, table, taggedTemplateData);
+
+      return tests.forEach(row =>
+        cb(
+          row.title,
+          applyArgumentsConcurrent(supportsDone, row.arguments, test),
           timeout,
         ),
       );
@@ -70,11 +107,22 @@ const buildTemplateTests = (
 const getHeadingKeys = (headings: string): Array<string> =>
   headings.replace(/\s/g, '').split('|');
 
-const applyArguments = (
+function applyArguments(
   supportsDone: boolean,
   params: Array<unknown>,
   test: Global.EachTestFn,
-): Global.EachTestFn =>
-  supportsDone && params.length < test.length
+): Global.EachTestFn {
+  return supportsDone && params.length < test.length
     ? (done: Global.DoneFn) => test(...params, done)
     : () => test(...params);
+}
+
+function applyArgumentsConcurrent(
+  supportsDone: boolean,
+  params: Array<unknown>,
+  test: Global.ConcurrentEachTestFn,
+): Global.ConcurrentEachTestFn {
+  return supportsDone && params.length < test.length
+    ? (done: Global.DoneFn) => test(...params, done)
+    : () => test(...params);
+}
