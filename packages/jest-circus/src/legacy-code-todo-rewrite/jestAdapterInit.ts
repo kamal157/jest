@@ -21,6 +21,7 @@ import {
   addSerializer,
   buildSnapshotResolver,
 } from 'jest-snapshot';
+import {bindConcurrent} from 'jest-each';
 import throat from 'throat';
 import {
   ROOT_DESCRIBE_BLOCK_NAME,
@@ -98,6 +99,8 @@ export const initialize = ({
 
     return concurrent;
   })(nodeGlobal.test);
+
+  nodeGlobal.test.each.concurrent = bindConcurrent(nodeGlobal.test.concurrent);
 
   addEventHandler(eventHandler);
 
