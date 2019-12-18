@@ -75,7 +75,7 @@ export const bindConcurrent = (
       return tests.forEach(row =>
         cb(
           row.title,
-          applyArgumentsConcurrent(supportsDone, row.arguments, test),
+          applyArguments(supportsDone, row.arguments, test),
           timeout,
         ),
       );
@@ -110,18 +110,18 @@ const getHeadingKeys = (headings: string): Array<string> =>
 function applyArguments(
   supportsDone: boolean,
   params: Array<unknown>,
-  test: Global.EachTestFn,
-): Global.EachTestFn {
-  return supportsDone && params.length < test.length
-    ? (done: Global.DoneFn) => test(...params, done)
-    : () => test(...params);
-}
-
-function applyArgumentsConcurrent(
+  test: Global.ConcurrentEachTestFn,
+): Global.ConcurrentEachTestFn;
+function applyArguments(
   supportsDone: boolean,
   params: Array<unknown>,
-  test: Global.ConcurrentEachTestFn,
-): Global.ConcurrentEachTestFn {
+  test: Global.EachTestFn,
+): Global.EachTestFn;
+function applyArguments(
+  supportsDone: boolean,
+  params: Array<unknown>,
+  test: Global.ConcurrentEachTestFn | Global.EachTestFn,
+): Global.ConcurrentEachTestFn | Global.EachTestFn {
   return supportsDone && params.length < test.length
     ? (done: Global.DoneFn) => test(...params, done)
     : () => test(...params);
