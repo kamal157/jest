@@ -21,7 +21,7 @@ import {
   addSerializer,
   buildSnapshotResolver,
 } from 'jest-snapshot';
-import {bindConcurrent} from 'jest-each';
+import {bind} from 'jest-each';
 import throat from 'throat';
 import {
   ROOT_DESCRIBE_BLOCK_NAME,
@@ -72,7 +72,7 @@ export const initialize = ({
   nodeGlobal.test.concurrent = (test => {
     const concurrent = (
       testName: string,
-      testFn: () => Promise<any>,
+      testFn: Global.ConcurrentTestFn,
       timeout?: number,
     ) => {
       // For concurrent tests we first run the function that returns promise, and then register a
@@ -85,9 +85,9 @@ export const initialize = ({
       nodeGlobal.test(testName, () => promise, timeout);
     };
 
-    concurrent.only = (
+    const only = (
       testName: string,
-      testFn: () => Promise<any>,
+      testFn: Global.ConcurrentTestFn,
       timeout?: number,
     ) => {
       const promise = mutex(() => testFn());
@@ -95,12 +95,15 @@ export const initialize = ({
       test.only(testName, () => promise, timeout);
     };
 
+    concurrent.only = only;
     concurrent.skip = test.skip;
+
+    concurrent.each = bind(concurrent, false);
+    concurrent.skip.each = bind(concurrent.skip, false);
+    only.each = bind(concurrent.only, false);
 
     return concurrent;
   })(nodeGlobal.test);
-
-  nodeGlobal.test.each.concurrent = bindConcurrent(nodeGlobal.test.concurrent);
 
   addEventHandler(eventHandler);
 

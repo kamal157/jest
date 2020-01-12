@@ -18,53 +18,20 @@ export type EachTests = Array<{
   arguments: Array<unknown>;
 }>;
 
-type GlobalCallback = (
+type ErrorCallback = () => never;
+type GlobalCallback<A extends Global.TestCallback> = (
   testName: string,
-  fn: Global.TestFn,
-  timeout?: number,
-) => void;
-type GlobalCallbackConcurrent = (
-  testName: string,
-  fn: Global.ConcurrentTestFn,
+  fn: A | ErrorCallback,
   timeout?: number,
 ) => void;
 
-export default (cb: GlobalCallback, supportsDone: boolean = true) => (
-  table: Global.EachTable,
-  ...taggedTemplateData: Global.TemplateData
-) =>
-  function eachBind(
-    title: string,
-    test: Global.EachTestFn,
-    timeout?: number,
-  ): void {
-    try {
-      const tests = isArrayTable(taggedTemplateData)
-        ? buildArrayTests(title, table)
-        : buildTemplateTests(title, table, taggedTemplateData);
-
-      return tests.forEach(row =>
-        cb(
-          row.title,
-          applyArguments(supportsDone, row.arguments, test),
-          timeout,
-        ),
-      );
-    } catch (e) {
-      const error = new ErrorWithStack(e.message, eachBind);
-      return cb(title, () => {
-        throw error;
-      });
-    }
-  };
-
-export const bindConcurrent = (
-  cb: GlobalCallbackConcurrent,
+export default <A extends Global.TestCallback>(
+  cb: GlobalCallback<A>,
   supportsDone: boolean = true,
 ) => (table: Global.EachTable, ...taggedTemplateData: Global.TemplateData) =>
   function eachBind(
     title: string,
-    test: Global.ConcurrentEachTestFn,
+    test: Global.EachTestFn<A>,
     timeout?: number,
   ): void {
     try {
@@ -75,7 +42,7 @@ export const bindConcurrent = (
       return tests.forEach(row =>
         cb(
           row.title,
-          applyArguments(supportsDone, row.arguments, test),
+          applyArguments(supportsDone, row.arguments, test) as A,
           timeout,
         ),
       );
@@ -107,22 +74,11 @@ const buildTemplateTests = (
 const getHeadingKeys = (headings: string): Array<string> =>
   headings.replace(/\s/g, '').split('|');
 
-function applyArguments(
+const applyArguments = <A extends Global.TestCallback>(
   supportsDone: boolean,
   params: Array<unknown>,
-  test: Global.ConcurrentEachTestFn,
-): Global.ConcurrentEachTestFn;
-function applyArguments(
-  supportsDone: boolean,
-  params: Array<unknown>,
-  test: Global.EachTestFn,
-): Global.EachTestFn;
-function applyArguments(
-  supportsDone: boolean,
-  params: Array<unknown>,
-  test: Global.ConcurrentEachTestFn | Global.EachTestFn,
-): Global.ConcurrentEachTestFn | Global.EachTestFn {
-  return supportsDone && params.length < test.length
+  test: Global.EachTestFn<A>,
+): Global.EachTestFn<any> =>
+  supportsDone && params.length < test.length
     ? (done: Global.DoneFn) => test(...params, done)
     : () => test(...params);
-}

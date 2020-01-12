@@ -7,7 +7,7 @@
  */
 
 describe('concurrent', () => {
-  test.each.concurrent([
+  test.concurrent.each([
     [1, 2],
     [2, 3],
     [3, 4],

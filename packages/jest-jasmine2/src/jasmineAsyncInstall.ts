@@ -145,7 +145,11 @@ function makeConcurrent(
   env: Jasmine['currentEnv_'],
   mutex: ReturnType<typeof throat>,
 ): Global.ItConcurrentBase {
-  return function(specName, fn, timeout) {
+  const concurrentFn = function(
+    specName: string,
+    fn: Global.ConcurrentTestFn,
+    timeout?: number,
+  ): void {
     if (
       env != null &&
       !env.specFilter({getFullName: () => specName || ''} as Spec)
@@ -170,6 +174,9 @@ function makeConcurrent(
 
     return originalFn.call(env, specName, () => promise, timeout);
   };
+
+  // @ts-ignore
+  return concurrentFn;
 }
 
 export default function jasmineAsyncInstall(

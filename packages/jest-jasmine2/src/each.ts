@@ -6,15 +6,12 @@
  */
 
 import {JestEnvironment} from '@jest/environment';
-import {bindConcurrent, bind as bindEach} from 'jest-each';
+import {bind as bindEach} from 'jest-each';
 
 export default (environment: JestEnvironment): void => {
   environment.global.it.each = bindEach(environment.global.it);
   environment.global.fit.each = bindEach(environment.global.fit);
   environment.global.xit.each = bindEach(environment.global.xit);
-  environment.global.it.each.concurrent = bindConcurrent(
-    environment.global.it.concurrent,
-  );
   environment.global.describe.each = bindEach(
     environment.global.describe,
     false,
@@ -25,6 +22,18 @@ export default (environment: JestEnvironment): void => {
   );
   environment.global.fdescribe.each = bindEach(
     environment.global.fdescribe,
+    false,
+  );
+  environment.global.it.concurrent.each = bindEach(
+    environment.global.it.concurrent,
+    false,
+  );
+  environment.global.it.concurrent.only.each = bindEach(
+    environment.global.it.concurrent.only,
+    false,
+  );
+  environment.global.it.concurrent.skip.each = bindEach(
+    environment.global.it.concurrent.skip,
     false,
   );
 };

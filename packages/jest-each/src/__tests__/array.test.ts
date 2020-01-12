@@ -32,6 +32,7 @@ const getGlobalTestMocks = () => {
   globals.it.skip = jest.fn();
   globals.describe.only = jest.fn();
   globals.describe.skip = jest.fn();
+  globals.test.concurrent = jest.fn();
   return globals;
 };
 
