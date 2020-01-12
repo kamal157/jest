@@ -115,6 +115,14 @@ describe('async jasmine', () => {
     expect(json.testResults[0].message).toMatch(/concurrent test fails/);
   });
 
+  it('works with concurrent.each', () => {
+    const {json} = runWithJson('jasmine-async', ['concurrent-each.test.js']);
+    expect(json.numTotalTests).toBe(2);
+    expect(json.numPassedTests).toBe(1);
+    expect(json.numFailedTests).toBe(0);
+    expect(json.numPendingTests).toBe(1);
+  });
+
   it("doesn't execute more than 5 tests simultaneously", () => {
     const {json} = runWithJson('jasmine-async', ['concurrent-many.test.js']);
     expect(json.numTotalTests).toBe(10);

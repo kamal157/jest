@@ -33,14 +33,17 @@ const getGlobalTestMocks = () => {
   globals.describe.only = jest.fn();
   globals.describe.skip = jest.fn();
   globals.test.concurrent = jest.fn();
+  globals.it.concurrent = jest.fn();
   return globals;
 };
 
 describe('jest-each', () => {
   [
     ['test'],
+    ['test', 'concurrent'],
     ['test', 'only'],
     ['it'],
+    ['it', 'concurrent'],
     ['fit'],
     ['it', 'only'],
     ['describe'],

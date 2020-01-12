@@ -7,10 +7,6 @@
 
 'use strict';
 
-it.concurrent('one', () => Promise.resolve());
-it.concurrent.skip('two', () => Promise.resolve());
-it.concurrent('three', () => Promise.resolve());
-it.concurrent('concurrent test fails', () => Promise.reject());
 it.concurrent.each(
   [
     [1, 2],

@@ -195,6 +195,14 @@ exports[`jest-each .it throws error when there are no arguments for given headin
 "
 `;
 
+exports[`jest-each .it.concurrent throws an error when called with an empty string 1`] = `"Cannot read property 'mock' of undefined"`;
+
+exports[`jest-each .it.concurrent throws error when there are fewer arguments than headings over multiple rows 1`] = `"Cannot read property 'mock' of undefined"`;
+
+exports[`jest-each .it.concurrent throws error when there are fewer arguments than headings when given one row 1`] = `"Cannot read property 'mock' of undefined"`;
+
+exports[`jest-each .it.concurrent throws error when there are no arguments for given headings 1`] = `"Cannot read property 'mock' of undefined"`;
+
 exports[`jest-each .it.only throws an error when called with an empty string 1`] = `
 "Error: \`.each\` called with an empty Tagged Template Literal of table data.
 "
@@ -269,6 +277,45 @@ Missing <red>2</> arguments"
 `;
 
 exports[`jest-each .test throws error when there are no arguments for given headings 1`] = `
+"Error: \`.each\` called with a Tagged Template Literal with no data, remember to interpolate with \${expression} syntax.
+"
+`;
+
+exports[`jest-each .test.concurrent throws an error when called with an empty string 1`] = `
+"Error: \`.each\` called with an empty Tagged Template Literal of table data.
+"
+`;
+
+exports[`jest-each .test.concurrent throws error when there are fewer arguments than headings over multiple rows 1`] = `
+"Not enough arguments supplied for given headings:
+<green>a | b | expected</>
+
+Received:
+<red>Array [</>
+<red>  0,</>
+<red>  1,</>
+<red>  1,</>
+<red>  1,</>
+<red>  1,</>
+<red>]</>
+
+Missing <red>2</> arguments"
+`;
+
+exports[`jest-each .test.concurrent throws error when there are fewer arguments than headings when given one row 1`] = `
+"Not enough arguments supplied for given headings:
+<green>a | b | expected</>
+
+Received:
+<red>Array [</>
+<red>  0,</>
+<red>  1,</>
+<red>]</>
+
+Missing <red>2</> arguments"
+`;
+
+exports[`jest-each .test.concurrent throws error when there are no arguments for given headings 1`] = `
 "Error: \`.each\` called with a Tagged Template Literal with no data, remember to interpolate with \${expression} syntax.
 "
 `;

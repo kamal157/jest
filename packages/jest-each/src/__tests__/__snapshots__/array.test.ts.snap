@@ -60,6 +60,10 @@ Instead was called with: undefined
 "
 `;
 
+exports[`jest-each .it.concurrent throws an error when called with an empty array 1`] = `"Cannot read property 'mock' of undefined"`;
+
+exports[`jest-each .it.concurrent throws an error when not called with an array 1`] = `"Cannot read property 'mock' of undefined"`;
+
 exports[`jest-each .it.only throws an error when called with an empty array 1`] = `
 "Error: \`.each\` called with an empty Array of table data.
 "
@@ -78,6 +82,18 @@ exports[`jest-each .test throws an error when called with an empty array 1`] = `
 `;
 
 exports[`jest-each .test throws an error when not called with an array 1`] = `
+"\`.each\` must be called with an Array or Tagged Template Literal.
+
+Instead was called with: undefined
+"
+`;
+
+exports[`jest-each .test.concurrent throws an error when called with an empty array 1`] = `
+"Error: \`.each\` called with an empty Array of table data.
+"
+`;
+
+exports[`jest-each .test.concurrent throws an error when not called with an array 1`] = `
 "\`.each\` must be called with an Array or Tagged Template Literal.
 
 Instead was called with: undefined
